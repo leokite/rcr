@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>my.app.rcr.run</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/ykazama/dev/rcr/run.sh</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>60</integer>
+    <!-- <dict> -->
+        <!-- <key>Hour</key> -->
+        <!-- <integer>0</integer> -->
+        <!-- <key>Minute</key> -->
+        <!-- <integer>0</integer> -->
+    <!-- </dict> -->
+    <key>StandardOutPath</key>
+    <string>/Users/ykazama/dev/rcr/logs/launchd_out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/ykazama/dev/rcr/logs/launchd_err.log</string>
+    <key>WorkingDirectory</key>
+    <string>/Users/ykazama/dev/rcr/script</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin/:$PATH</string>
+    </dict>
+    <key>UserName</key>
+    <string>ykazama</string>
+    <key>SessionCreate</key>
+    <true />
+    <key>ExitTimeOut</key>
+    <integer>1200</integer>
+    <key>SoftResourceLimits</key>
+    <dict>
+        <key>CPU</key>
+        <integer>1200</integer>
+        <key>FileSize</key>
+        <integer>2000000000</integer>
+        <key>Data</key>
+        <integer>2000000000</integer>
+    </dict>
+    <key>HardResourceLimits</key>
+    <dict>
+        <key>CPU</key>
+        <integer>1200</integer>
+        <key>FileSize</key>
+        <integer>2000000000</integer>
+        <key>Data</key>
+        <integer>2000000000</integer>
+    </dict>
+</dict>
+</plist>
