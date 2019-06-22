@@ -4,7 +4,9 @@ exports.config = {
   helpers: {
     Puppeteer: {
       url: 'http://localhost',
-      show: false,
+      waitForAction: 1000,
+      waitForNavigation: [ "domcontentloaded", "networkidle0" ],
+      show: true,
     }
   },
   include: {

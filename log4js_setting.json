@@ -2,6 +2,10 @@
   "appenders": {
       "console": {
         "type": "console"
+      },
+      "system": {
+        "type": "file",
+        "filename": "./logs/system.log"
       }
   },
   "categories" : {
