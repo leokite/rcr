@@ -13,15 +13,6 @@ Before((I) => {
   I.see(config.app.name);
 });
 
-// Scenario('send mail', (I) => {
-  // mail.send('[SUCESS] subject', 'bodybodybody');
-// });
-
-// Scenario('test GitHub', (I) => {
-  // I.amOnPage('https://github.com');
-  // I.see('GitHub');
-// });
-
 Scenario('reservation', async (I) => {
   try {
     // チャージが足りているか確認
@@ -66,8 +57,8 @@ Scenario('reservation', async (I) => {
     I.waitForElement('p.zom_zangaku', 5);
     let message  = '乗車日：' +  await I.grabTextFrom('p.com_jousya + p > span');
     message = message +  '\n列車名：' + await I.grabTextFrom('p.train_name');
-    message  = message + '\n時間：' + await I.grabTextFrom('p.com_hour + p:nth-of-type(1) > span');
-    message = message + ' ' +  await I.grabTextFrom('p.com_hour + p:nth-of-type(3) > span');
+    message  = message + '\n時間：' + await I.grabTextFrom('p.com_hour + p > span');
+    message = message + ' - ' +  await I.grabTextFrom('p.com_hour + p + p + p > span');
     message = message + '\n人数：（おとな)：' + await I .grabTextFrom('p.y_adalt + p > span');
     message = message + ', （こども)：' + await I .grabTextFrom('p.y_child + p > span');
     message = message + '\n座席：' + await I.grabTextFrom('p.com_seet + p > span');
@@ -82,3 +73,11 @@ Scenario('reservation', async (I) => {
 
 });
 
+// Scenario('send mail', (I) => {
+  // mail.send('[SUCESS] subject', 'bodybodybody');
+// });
+
+// Scenario('test GitHub', (I) => {
+  // I.amOnPage('https://github.com');
+  // I.see('GitHub');
+// });
