@@ -20,3 +20,7 @@ Tear down Launchd
 ----------
   $ sudo lauchctl unload /Library/LaunchDaemons/my.app.rcr.run.plist
 
+Set up Cloud Functions with Pub/Sub
+----------
+
+//

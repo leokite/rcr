@@ -28,16 +28,12 @@ module.exports.send = function(subject, text) {
     message.text = text;
     transporter.sendMail(message, function(error, info) {
       if (error) {
-        // console.log("send mail failed");
-        // console.log(error.message);
         logger.system.error("send mail failed");
         logger.system.error(error.message);
         return;
       }
-      // console.log("send mail successful");
-      // console.log(info.messageId);
-      logger.system.info("send mail successful");
-      logger.system.info(info.messageId);
+      logger.system.debug("send mail successful");
+      logger.system.debug(info.messageId);
     });
   } catch(e) {
     logger.system.error("Error", e);
