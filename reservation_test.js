@@ -27,13 +27,13 @@ Scenario('reservation', async (I) => {
     let day = oneMonthLater.day();
     if ((day == 0) || (day == 6)) {
       logger.system.debug("ロマンスカーを予約しませんでした" + day);
-      await mail.send('[SKIP] ロマンスカーを予約しませんでした', day);
+      await mail.send('[RCR][SKIP] ロマンスカーを予約しませんでした', day);
       return;
     } else {
       let holidayName = util.getHolidayName(oneMonthLater.toDate());
       if (holidayName) {
         logger.system.debug("ロマンスカーを予約しませんでした" + holidayName);
-        await mail.send('[SKIP] ロマンスカーを予約しませんでした', holidayName);
+        await mail.send('[RCR][SKIP] ロマンスカーを予約しませんでした', holidayName);
         return;
       }
     }
@@ -82,10 +82,10 @@ Scenario('reservation', async (I) => {
     message = message + '\n購入額：' + await I.grabTextFrom('p.com_kounyu + p > span');
     message = message + '\n残額：' + await I.grabTextFrom('p.com_zangaku + p > span');
 
-    await mail.send('[SUCCESS] ' + month + '/' + date  + ' ロマンスカーを予約しました', message);
+    await mail.send('[RCR][SUCCESS] ' + month + '/' + date  + ' ロマンスカーを予約しました', message);
 
   } catch(error) {
-    await mail.send('[ERROR] ロマンスカーを予約できませんでした', error.message);
+    await mail.send('[RCR][ERROR] ロマンスカーを予約できませんでした', error.message);
     logger.system.error("Error", error.message);
   }
 
