@@ -20,7 +20,15 @@ Tear down Launchd
 ----------
   $ sudo lauchctl unload /Library/LaunchDaemons/my.app.rcr.run.plist
 
-Set up Cloud Functions with Pub/Sub
+Set up Cloud Functions with HTTP Trigger
 ----------
+   $ gcloud config set project <project_name>
+   $ gcloud config set compute/region asia-northeast1
+   $ gcloud config set compute/zone asia-northeast1-a
+   $ gcloud beta functions deploy reservation --trigger-http --runtime nodejs8 --memory 1024MB --set-env-vars TZ=Asia/Tokyo
+
+Call Cloud Functions Manually
+-----------
+   $ gcloud functions call reservation
 
 //
