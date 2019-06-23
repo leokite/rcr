@@ -3,14 +3,14 @@
       "console": {
         "type": "console"
       },
-      "system": {
+      "file": {
         "type": "file",
         "filename": "./logs/system.log"
       }
   },
   "categories" : {
     "default" : {
-      "appenders" : ["console"],
+      "appenders" : ["console", "file"],
       "level": "trace"
     }
   }

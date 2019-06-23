@@ -1,3 +1,4 @@
+const logger = require('./log.js');
 const config = require('../app_conf.js');
 const nodemailer = require('nodemailer');
 const gmailAuth = {
@@ -27,20 +28,19 @@ module.exports.send = function(subject, text) {
     message.text = text;
     transporter.sendMail(message, function(error, info) {
       if (error) {
-        console.log("send mail failed");
-        console.log(error.message);
-        // logger.system.error("send mail failed");
-        // logger.system.error(error.message);
+        // console.log("send mail failed");
+        // console.log(error.message);
+        logger.system.error("send mail failed");
+        logger.system.error(error.message);
         return;
       }
-      console.log("send mail successful");
-      console.log(info.messageId);
-      // logger.system.info("send mail successful");
-      // logger.system.info(info.messageId);
+      // console.log("send mail successful");
+      // console.log(info.messageId);
+      logger.system.info("send mail successful");
+      logger.system.info(info.messageId);
     });
   } catch(e) {
-    console.log("Error", e);
-    // logger.system.error("Error", e);
+    logger.system.error("Error", e);
   }
 };
 

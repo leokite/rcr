@@ -1,39 +1,56 @@
 const config = require('./app_conf.js');
 const mail = require('./modules/mail.js');
 const util = require('./modules/util.js');
+const logger = require('./modules/log.js');
+const moment = require('moment');
 
 Feature('RomanceCar Reservation');
 
 Before((I) => {
-  // login
+  logger.system.debug("login start");
   I.amOnPage('https://www.web-odakyu.com/wsr/index.jsp');
   I.fillField('#number', config.app.id);
   I.fillField('#pass', config.app.pass);
   I.click('ログイン');
   I.see(config.app.name);
+  logger.system.debug("login end");
 });
 
 Scenario('reservation', async (I) => {
   try {
-    // チャージが足りているか確認
-    // 足りない場合、チャージしたことをメールし以降の処理を行う
-    // 足りている場合、何もせずに以降の処理を行う
-
     // 1ヶ月後が休日かどうかを確認（土曜日(6)、日曜日(0)、「祝日」）
     let oneMonthLater = util.getOneMonthLater();
+    logger.system.debug("The reservation date is : "
+      + oneMonthLater.format("YYYY/MM/DD HH:mm:ss dddd"));
 
-    // 休日ならば、休日のため予約しなかったというメールを送信
+    // 休日ならば、予約しなかったというメールを送信
+    let day = oneMonthLater.day();
+    if ((day == 0) || (day == 6)) {
+      logger.system.debug("ロマンスカーを予約しませんでした" + day);
+      await mail.send('[SKIP] ロマンスカーを予約しませんでした', day);
+      return;
+    } else {
+      let holidayName = util.getHolidayName(oneMonthLater.toDate());
+      if (holidayName) {
+        logger.system.debug("ロマンスカーを予約しませんでした" + holidayName);
+        await mail.send('[SKIP] ロマンスカーを予約しませんでした', holidayName);
+        return;
+      }
+    }
 
-    // 休日でなければ、予約をして結果をメール送信
     I.click('特急券予約／購入');
 
     let month = '';
-    let date = '';
     if ((oneMonthLater.month() + 1) < 10) {
       month = '0' + String(oneMonthLater.month() + 1);
+    } else {
+      month = String(oneMonthLater.month() + 1);
     }
+    let date = '';
     if (oneMonthLater.date() < 10) {
-      date = '0' + String(oneMonthLater.date() + 1);
+      date = '0' + String(oneMonthLater.date());
+    } else {
+      date = String(oneMonthLater.date());
     }
     I.waitForElement('#on_month', 5);
     I.selectOption('#on_month', month);
@@ -54,7 +71,7 @@ Scenario('reservation', async (I) => {
     I.waitForElement("#message", 5);
     I.see('購入できました。');
 
-    I.waitForElement('p.zom_zangaku', 5);
+    I.waitForElement('p.com_zangaku', 5);
     let message  = '乗車日：' +  await I.grabTextFrom('p.com_jousya + p > span');
     message = message +  '\n列車名：' + await I.grabTextFrom('p.train_name');
     message  = message + '\n時間：' + await I.grabTextFrom('p.com_hour + p > span');
@@ -64,14 +81,21 @@ Scenario('reservation', async (I) => {
     message = message + '\n座席：' + await I.grabTextFrom('p.com_seet + p > span');
     message = message + '\n購入額：' + await I.grabTextFrom('p.com_kounyu + p > span');
     message = message + '\n残額：' + await I.grabTextFrom('p.com_zangaku + p > span');
+
     await mail.send('[SUCCESS] ' + month + '/' + date  + ' ロマンスカーを予約しました', message);
+
   } catch(error) {
     await mail.send('[ERROR] ロマンスカーを予約できませんでした', error.message);
-    console.log("Error!", e);
-    // logger.system.error("Error", e);
+    logger.system.error("Error", error.message);
   }
 
 });
+
+// Scenario('holiday', (I) => {
+  // let date = moment('2019/07/15');
+  // let holidayName = util.getHolidayName(date.toDate());
+  // console.log(holidayName);
+// });
 
 // Scenario('send mail', (I) => {
   // mail.send('[SUCESS] subject', 'bodybodybody');
