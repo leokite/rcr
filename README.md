@@ -22,10 +22,10 @@ Tear down Launchd
 
 Set up Cloud Functions with HTTP Trigger
 ----------
-   $ gcloud config set project <project_name>
+   $ gcloud config set project <PROJECT-NAME>
    $ gcloud config set compute/region asia-northeast1
    $ gcloud config set compute/zone asia-northeast1-a
-   $ gcloud beta functions deploy reservation --trigger-http --runtime nodejs8 --memory 1024MB --set-env-vars TZ=Asia/Tokyo
+   $ gcloud beta functions deploy reservation --trigger-resource <TOPIC-NAME> --trigger-event google.pubsub.topic.publish --runtime nodejs8 --memory 1024MB --region asia-northeast1 --set-env-vars TZ=Asia/Tokyo
 
 Call Cloud Functions Manually
 -----------

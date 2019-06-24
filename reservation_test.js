@@ -2,49 +2,47 @@ const config = require('./app_conf.js');
 const mail = require('./modules/mail.js');
 const logger = require('./modules/log.js');
 const japaneseHolidays = require('japanese-holidays');
+const fs = require('fs');
 
 Feature('RomanceCar Reservation');
 
 Before((I) => {
-  logger.system.debug("login start");
   I.amOnPage('https://www.web-odakyu.com/wsr/index.jsp');
   I.fillField('#number', config.app.id);
   I.fillField('#pass', config.app.pass);
   I.click('ログイン');
   I.waitForElement('#hyoji_box');
   I.see(config.app.name);
-  logger.system.debug("login end");
 });
 
 Scenario('reservation', async (I) => {
   // 今日から1ヶ月後の日時を取得
   let reserveDate = new Date();
   reserveDate.setMonth(reserveDate.getMonth() + 1);
-  logger.system.debug('The reservation date is : ' + reserveDate.toString());
+  logger.system.debug('The reservation date is : ' + reserveDate.toISOString());
 
-  let month = '';
-  if ((reserveDate.getMonth() + 1) < 10) {
-    month = '0' + String(reserveDate.getMonth() + 1);
-  } else {
-    month = String(reserveDate.getMonth() + 1);
+  let month = reserveDate.getMonth() + 1;
+  if (month < 10) {
+    month = '0' + String(month);
   }
-  let date = '';
-  if (reserveDate.getDate() < 10) {
-    date = '0' + String(reserveDate.getDate());
-  } else {
-    date = String(reserveDate.getDate());
+  let date = reserveDate.getDate();
+  if (date < 10) {
+    date = '0' + String(date);
   }
 
   // 休日(日曜日(0) or 土曜日(6) or 祝日)ならば予約をスキップ
   if ((reserveDate.getDay() == 0) || (reserveDate.getDay() == 6)) {
-    logger.system.debug('土日のためロマンスカーを予約しませんでした');
-    await mail.send('[RCR][SKIP] ' + '(' + month + '/' + date + ')' + ' 土日のためロマンスカーを予約しませんでした', '');
+    logger.system.info('土日のためロマンスカーを予約しませんでした');
+    await mail.send('[RCR][SKIP] ' + '(' + month + '/' + date + ')'
+      + ' 土日のためロマンスカーを予約しませんでした', '');
     return;
+
   } else {
     let holidayName = japaneseHolidays.isHoliday(reserveDate);
     if (holidayName) {
-      logger.system.debug(holidayName + 'のためロマンスカーを予約しませんでした' );
-      await mail.send('[RCR][SKIP] ' + '(' + month + '/' + date + ')' + ' ' + holidayName + 'のためロマンスカーを予約しませんでした', '');
+      logger.system.info(holidayName + 'のためロマンスカーを予約しませんでした' );
+      await mail.send('[RCR][SKIP] ' + '(' + month + '/' + date + ')'
+        + ' ' + holidayName + 'のためロマンスカーを予約しませんでした', '');
       return;
     }
   }
@@ -53,8 +51,8 @@ Scenario('reservation', async (I) => {
     I.click('特急券予約／購入');
 
     I.waitForElement('#on_month', 5);
-    I.selectOption('#on_month', month);
-    I.selectOption('#on_day', date);
+    I.selectOption('#on_month', String(month));
+    I.selectOption('#on_day', String(date));
     I.selectOption('on_hour', config.app.reserveHour);
     I.selectOption('#syuppatu', config.app.departure);
     I.selectOption('#toutyaku', config.app.arrival);
@@ -83,14 +81,18 @@ Scenario('reservation', async (I) => {
     message = message + '\n購入額：' + await I.grabTextFrom('p.com_kounyu + p > span');
     message = message + '\n残額：' + await I.grabTextFrom('p.com_zangaku + p > span');
 
+    logger.system.info('ロマンスカーを予約しました');
     await mail.send('[RCR][SUCCESS] ' + '(' +  month + '/' + date + ')'
       + ' ロマンスカーを予約しました', message);
-    logger.system.debug('ロマンスカーを予約しました');
 
   } catch(error) {
-    await mail.send('[RCR][ERROR] ' + '(' + month + '/' + date + ')'
-      + ' ロマンスカーを予約できませんでした', error.message);
-    logger.system.error("Error", error.message);
+    logger.system.error("ロマンスカーを予約できませんでした", error.message);
+    let attachments = [
+      { filename: 'reservation.failed.png',
+        path : './output/reservation.failed.png',
+      }];
+    await mail.sendWithAttach('[RCR][ERROR] ' + '(' + month + '/' + date + ')'
+      + ' ロマンスカーを予約できませんでした', error.message, attachments);
   }
 });
 
@@ -100,11 +102,15 @@ Scenario('reservation', async (I) => {
   // console.log(holidayName);
 // });
 
-// Scenario('send mail', (I) => {
-  // mail.send('[SUCESS] subject', 'bodybodybody');
+// Scenario('send mail', async (I) => {
+  // let attachments = [
+    // { filename: '_GitHub.failed.png',
+      // path : './output/test_GitHub.failed.png',
+    // }];
+  // await mail.sendWithAttach('[SUCESS] subject', 'bodybodybody', attachments);
 // });
 
 // Scenario('test GitHub', (I) => {
   // I.amOnPage('https://github.com');
-  // I.see('GitHub');
+  // I.see('GitHub------');
 // });
