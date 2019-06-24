@@ -1,59 +1,57 @@
 const config = require('./app_conf.js');
 const mail = require('./modules/mail.js');
-const util = require('./modules/util.js');
 const logger = require('./modules/log.js');
-const moment = require('moment');
+const japaneseHolidays = require('japanese-holidays');
 
 Feature('RomanceCar Reservation');
 
 Before((I) => {
   logger.system.debug("login start");
-
   I.amOnPage('https://www.web-odakyu.com/wsr/index.jsp');
   I.fillField('#number', config.app.id);
   I.fillField('#pass', config.app.pass);
   I.click('ログイン');
   I.waitForElement('#hyoji_box');
   I.see(config.app.name);
-
   logger.system.debug("login end");
 });
 
 Scenario('reservation', async (I) => {
-  try {
-    let reserveDate = util.getOneMonthLaterDateFromToday();
-    logger.system.debug('The reservation date is : '
-      + reserveDate.format("YYYY/MM/DD HH:mm:ss dddd"));
 
-    let month = '';
-    if ((reserveDate.month() + 1) < 10) {
-      month = '0' + String(reserveDate.month() + 1);
-    } else {
-      month = String(reserveDate.month() + 1);
-    }
-    let date = '';
-    if (reserveDate.date() < 10) {
-      date = '0' + String(reserveDate.date());
-    } else {
-      date = String(reserveDate.date());
-    }
+  // 今日から1ヶ月後の日時を取得
+  let reserveDate = new Date();
+  reserveDate.setMonth(reserveDate.getMonth() + 1);
+  logger.system.debug('The reservation date is : '
+    + reserveDate.toString());
 
-    // 休日(日曜日(0) or 土曜日(6) or 祝日)ならば予約をスキップ
-    let day = reserveDate.day();
-    if ((day == 0) || (day == 6)) {
-      logger.system.debug('土日のためロマンスカーを予約しませんでした');
-      await mail.send('[RCR][SKIP] ' + '(' + month + '/' + date + ')' + 'は土日のためロマンスカーを予約しませんでした', day);
+  let month = '';
+  if ((reserveDate.getMonth() + 1) < 10) {
+    month = '0' + String(reserveDate.getMonth() + 1);
+  } else {
+    month = String(reserveDate.getMonth() + 1);
+  }
+  let date = '';
+  if (reserveDate.getDate() < 10) {
+    date = '0' + String(reserveDate.getDate());
+  } else {
+    date = String(reserveDate.getDate());
+  }
+
+  // 休日(日曜日(0) or 土曜日(6) or 祝日)ならば予約をスキップ
+  if ((reserveDate.getDay() == 0) || (reserveDate.getDay() == 6)) {
+    logger.system.debug('土日のためロマンスカーを予約しませんでした');
+    await mail.send('[RCR][SKIP] ' + '(' + month + '/' + date + ')' + ' 土日のためロマンスカーを予約しませんでした', '');
+    return;
+  } else {
+    let holidayName = japaneseHolidays.isHoliday(reserveDate);
+    if (holidayName) {
+      logger.system.debug(holidayName + 'のためロマンスカーを予約しませんでした' );
+      await mail.send('[RCR][SKIP] ' + '(' + month + '/' + date + ')' + ' ' + holidayName + 'のためロマンスカーを予約しませんでした', '');
       return;
-
-    } else {
-      let holidayName = util.getHolidayName(reserveDate.toDate());
-      if (holidayName) {
-        logger.system.debug(holidayName + 'のためロマンスカーを予約しませんでした' );
-      await mail.send('[RCR][SKIP] ' + '(' + month + '/' + date + ')' + 'は' + holidayName + 'のためロマンスカーを予約しませんでした', holidayName);
-        return;
-      }
     }
+  }
 
+  try {
     I.click('特急券予約／購入');
 
     I.waitForElement('#on_month', 5);
@@ -88,19 +86,19 @@ Scenario('reservation', async (I) => {
     message = message + '\n残額：' + await I.grabTextFrom('p.com_zangaku + p > span');
 
     await mail.send('[RCR][SUCCESS] ' + '(' +  month + '/' + date + ')'
-      + ' のロマンスカーを予約しました', message);
+      + ' ロマンスカーを予約しました', message);
     logger.system.debug('ロマンスカーを予約しました');
 
   } catch(error) {
     await mail.send('[RCR][ERROR] ' + '(' + month + '/' + date + ')'
-      + ' のロマンスカーを予約できませんでした', error.message);
+      + ' ロマンスカーを予約できませんでした', error.message);
     logger.system.error("Error", error.message);
   }
 });
 
 // Scenario('holiday', (I) => {
-  // let date = moment('2019/07/15');
-  // let holidayName = util.getHolidayName(date.toDate());
+  // let date = new Date('2019/07/15');
+  // let holidayName = japaneseHolidays.isHoliday(date);
   // console.log(holidayName);
 // });
 
