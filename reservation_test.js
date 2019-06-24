@@ -17,12 +17,10 @@ Before((I) => {
 });
 
 Scenario('reservation', async (I) => {
-
   // 今日から1ヶ月後の日時を取得
   let reserveDate = new Date();
   reserveDate.setMonth(reserveDate.getMonth() + 1);
-  logger.system.debug('The reservation date is : '
-    + reserveDate.toString());
+  logger.system.debug('The reservation date is : ' + reserveDate.toString());
 
   let month = '';
   if ((reserveDate.getMonth() + 1) < 10) {
@@ -79,8 +77,8 @@ Scenario('reservation', async (I) => {
     message = message +  '\n列車名：' + await I.grabTextFrom('p.train_name');
     message  = message + '\n時間：' + await I.grabTextFrom('p.com_hour + p > span');
     message = message + ' - ' +  await I.grabTextFrom('p.com_hour + p + p + p > span');
-    message = message + '\n人数：（おとな)：' + await I .grabTextFrom('p.y_adalt + p > span');
-    message = message + ', （こども)：' + await I .grabTextFrom('p.y_child + p > span');
+    message = message + '\n人数：（おとな）：' + await I .grabTextFrom('p.y_adalt + p > span');
+    message = message + ', （こども）：' + await I .grabTextFrom('p.y_child + p > span');
     message = message + '\n座席：' + await I.grabTextFrom('p.com_seet + p > span');
     message = message + '\n購入額：' + await I.grabTextFrom('p.com_kounyu + p > span');
     message = message + '\n残額：' + await I.grabTextFrom('p.com_zangaku + p > span');
