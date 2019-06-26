@@ -16,7 +16,7 @@ Before((I) => {
 });
 
 Scenario('reservation', async (I) => {
-  // 今日から1ヶ月後の日時を取得
+  // 今日から1ヶ月後の日時を予約日とする
   let reserveDate = new Date();
   reserveDate.setMonth(reserveDate.getMonth() + 1);
   logger.system.debug('The reservation date is : ' + reserveDate.toISOString());
@@ -30,13 +30,12 @@ Scenario('reservation', async (I) => {
     date = '0' + String(date);
   }
 
-  // 休日(日曜日(0) or 土曜日(6) or 祝日)ならば予約をスキップ
+  // 休日(日曜日(0) or 土曜日(6) or 祝日)なら予約をしない
   if ((reserveDate.getDay() == 0) || (reserveDate.getDay() == 6)) {
     logger.system.info('土日のためロマンスカーを予約しませんでした');
     await mail.send('[RCR][SKIP] ' + '(' + month + '/' + date + ')'
       + ' 土日のためロマンスカーを予約しませんでした', '');
     return;
-
   } else {
     let holidayName = japaneseHolidays.isHoliday(reserveDate);
     if (holidayName) {
@@ -79,12 +78,20 @@ Scenario('reservation', async (I) => {
     message = message + ', （こども）：' + await I .grabTextFrom('p.y_child + p > span');
     message = message + '\n座席：' + await I.grabTextFrom('p.com_seet + p > span');
     message = message + '\n購入額：' + await I.grabTextFrom('p.com_kounyu + p > span');
-    message = message + '\n残額：' + await I.grabTextFrom('p.com_zangaku + p > span');
+    let zangakuPoint = await I.grabTextFrom('p.com_zangaku + p > span');
+    message = message + '\n残額：' + zangakuPoint;
 
     logger.system.info('ロマンスカーを予約しました');
     await mail.send('[RCR][SUCCESS] ' + '(' +  month + '/' + date + ')'
       + ' ロマンスカーを予約しました', message);
 
+    logger.system.info('残額が ' + zangakuPoint + ' になりました');
+    // 残額が1000円以下の場合のメール送信する
+    let zangaku = zangakuPoint.slice(0, -6).replace(/,/g, '');
+    if (Number(zangaku) < 1000) {
+      await mail.send('[RCR][ALEART] '
+        + ' 残額が ' + zangakuPoint + ' になりました', '');
+    }
   } catch(error) {
     logger.system.error("ロマンスカーを予約できませんでした", error.message);
     let attachments = [
