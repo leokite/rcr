@@ -86,7 +86,7 @@ Scenario('reservation', async (I) => {
       + ' ロマンスカーを予約しました', message);
 
     logger.system.info('残額が ' + zangakuPoint + ' になりました');
-    // 残額が1000円以下の場合のメール送信する
+    // 残額が1000円以下の場合メール送信する
     let zangaku = zangakuPoint.slice(0, -6).replace(/,/g, '');
     if (Number(zangaku) < 1000) {
       await mail.send('[RCR][ALEART] '
@@ -94,12 +94,14 @@ Scenario('reservation', async (I) => {
     }
   } catch(error) {
     logger.system.error("ロマンスカーを予約できませんでした", error.message);
-    let attachments = [
-      { filename: 'reservation.failed.png',
-        path : './output/reservation.failed.png',
-      }];
     await mail.sendWithAttach('[RCR][ERROR] ' + '(' + month + '/' + date + ')'
-      + ' ロマンスカーを予約できませんでした', error.message, attachments);
+      + ' ロマンスカーを予約できませんでした', error.message);
+    // let attachments = [
+      // { filename: 'reservation.failed.png',
+        // path : './output/reservation.failed.png',
+      // }];
+    // await mail.sendWithAttach('[RCR][ERROR] ' + '(' + month + '/' + date + ')'
+      // + ' ロマンスカーを予約できませんでした', error.message, attachments);
   }
 });
 

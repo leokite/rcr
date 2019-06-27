@@ -14,6 +14,6 @@ exports.app = {
   arrival : '表参道',
   adultNum : '1',
   childNum : '0',
-  trainName : 'メトロモーニングウェイ４０号(MSE10)'
+  trainName : 'メトロモーニングウェイ４２号(MSE10)'
 }
 

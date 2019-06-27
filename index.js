@@ -11,7 +11,7 @@ module.exports.reservation = async (req, res) => {
   let config = {
     helpers: {
       Puppeteer: {
-        url: 'https://github.com', // base url
+        url: 'http://localhost', // base url
         disableScreenshots: true, // don't store screenshots on failure
         windowSize: '1200x1000', // set window size dimensions
         waitForAction: 1000, // increase timeout for clicking
