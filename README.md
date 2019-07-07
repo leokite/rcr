@@ -11,9 +11,9 @@ Getting Started
 Config
 ----------
 // 6:44 町田始発
-trainName : 'メトロモーニングウェイ４０号(MSE10)'
+trainName : 'メトロモーニングウェイ４０号'
 // 8:33 町田始発
-trainName : 'メトロモーニングウェイ４２号(MSE10)'
+trainName : 'メトロモーニングウェイ４２号'
 
 Set up Launchd
 ----------
@@ -33,6 +33,7 @@ Set up Cloud Functions
    $ gcloud config set compute/region asia-northeast1
    $ gcloud config set compute/zone asia-northeast1-a
    $ gcloud beta functions deploy reservation --trigger-http --runtime nodejs8 --memory 1024MB --region asia-northeast1 --set-env-vars TZ=Asia/Tokyo
+
    Note: Need to set up Cloud Scheduler to trigger this Cloud Functions using HTTP.
 
 //

@@ -96,6 +96,7 @@ Scenario('reservation', async (I) => {
     logger.system.error("ロマンスカーを予約できませんでした", error.message);
     await mail.sendWithAttach('[RCR][ERROR] ' + '(' + month + '/' + date + ')'
       + ' ロマンスカーを予約できませんでした', error.message);
+    // for local
     // let attachments = [
       // { filename: 'reservation.failed.png',
         // path : './output/reservation.failed.png',
@@ -112,14 +113,14 @@ Scenario('reservation', async (I) => {
 // });
 
 // Scenario('send mail', async (I) => {
-  // let attachments = [
-    // { filename: '_GitHub.failed.png',
-      // path : './output/test_GitHub.failed.png',
-    // }];
-  // await mail.sendWithAttach('[SUCESS] subject', 'bodybodybody', attachments);
+  // // let attachments = [
+    // // { filename: '_GitHub.failed.png',
+      // // path : './output/test_GitHub.failed.png',
+    // // }];
+  // // await mail.sendWithAttach('[SUCESS] subject', 'bodybodybody', attachments);
+  // await mail.sendWithAttach('[SUCESS] subject', 'bodybodybody');
 // });
 
 // Scenario('test GitHub', (I) => {
   // I.amOnPage('https://github.com');
-  // I.see('GitHub------');
 // });

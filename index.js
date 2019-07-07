@@ -44,21 +44,22 @@ module.exports.reservation = async (req, res) => {
   // create runner
   let codecept = new Codecept(config, opts);
 
-  codecept.initGlobals(__dirname);
+  await codecept.initGlobals(__dirname);
 
   // create helpers, support files, mocha
-  Container.create(config, opts);
+  await Container.create(config, opts);
 
   // initialize listeners
   // codecept.bootstrap();
-  codecept.runHooks();
+  await codecept.runHooks();
 
   // run bootstrap function from config
-  codecept.runBootstrap();
+  await codecept.runBootstrap();
 
   // load tests
-  codecept.loadTests('*_test.js');
+  await codecept.loadTests('*_test.js');
 
   // run tests
   codecept.run();
+
 }
