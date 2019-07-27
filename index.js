@@ -56,8 +56,11 @@ module.exports.reservation = async (req, res) => {
   // run bootstrap function from config
   await codecept.runBootstrap();
 
+  // delete cache to avoid ignoreing test target file.
+  delete require.cache[__dirname + '/reservation_test.js']
+
   // load tests
-  await codecept.loadTests('*_test.js');
+  await codecept.loadTests('reservation_test.js');
 
   // run tests
   codecept.run();
