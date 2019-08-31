@@ -35,10 +35,10 @@ module.exports.reservation = async (req, res) => {
 
   // a simple reporter, let's collect all passed and failed tests
   event.dispatcher.on(event.test.passed, (test) => {
-    message += `- Test "${test.title}" passed 😎`;
+    message += `- Test "${test.title}" passed `;
   });
   event.dispatcher.on(event.test.failed, (test) => {
-    message += `- Test "${test.title}" failed 😭`;
+    message += `- Test "${test.title}" failed `;
   });
 
   // create runner
