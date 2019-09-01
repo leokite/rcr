@@ -1,13 +1,13 @@
 exports.app = {
-  id : '3301779',
-  pass : '9036',
-  name : '風間',
+  id : '',
+  pass : '',
+  name : '',
 
-  clientId: '412939488062-r6eaqsr0vno426k5hnj3oskjk4cf25vf.apps.googleusercontent.com',
-  clientSecret: 'sBv-ZaUPcUmovXrwrlDh0nAm',
-  refreshToken: '1/vyFrJ6X8a8h7M7-AGm1nzPB9ZwnpQTcwi6hsBeqCz-s',
-  mailFrom : 'yuji.kazama.dev@gmail.com',
-  mailTo : 'yuji.kazama.dev@gmail.com',
+  clientId: '',
+  clientSecret: '',
+  refreshToken: '',
+  mailFrom : '',
+  mailTo : '',
 
   reserveHour : '07',
   departure : '町田',
